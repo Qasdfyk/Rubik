@@ -1,5 +1,5 @@
 import pygame
-from cube import Cube
+from cube import RubiksCube
 from pygame.locals import *
 
 
@@ -10,7 +10,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("3D Cube Rotation")
         self.clock = pygame.time.Clock()
-        self.cube = Cube()
+        self.cube = RubiksCube()
         self.angle_x = 0
         self.angle_y = 0
         self.dragging = False
@@ -35,7 +35,7 @@ class Game:
                 self.angle_y -= mx * 0.01
 
             self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y)
-
+            self.cube.draw_points(self.screen, self.width, self.height, self.angle_x, self.angle_y)
             pygame.display.flip()
             self.clock.tick(60)
 
