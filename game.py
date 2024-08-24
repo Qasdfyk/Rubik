@@ -29,6 +29,16 @@ class Game:
                 elif event.type == MOUSEBUTTONUP:
                     self.dragging = False
 
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_t:
+                        self.cube.turn_top_clockwise()
+                    elif event.key == pygame.K_r:
+                        self.cube.turn_right_clockwise()
+                    elif event.key == pygame.K_f:
+                        self.cube.turn_front_clockwise()
+   
+                
+
             if self.dragging:
                 mx, my = pygame.mouse.get_rel()
                 self.angle_x -= my * 0.01
