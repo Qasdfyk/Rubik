@@ -35,7 +35,6 @@ class Game:
                 self.angle_y -= mx * 0.01
 
             self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y)
-            #self.cube.draw_points(self.screen, self.width, self.height, self.angle_x, self.angle_y)
             pygame.display.flip()
             self.clock.tick(60)
 
