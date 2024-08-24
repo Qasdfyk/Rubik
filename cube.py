@@ -43,9 +43,10 @@ class RubiksCube:
             [255, 165, 0],  # Orange
             [255, 255, 255] # White
         ]
-
-        #self.face_colors = [color[:] for color in self.colors]
-        self.face_colors = random.choices(self.colors, k=len(self.faces))
+        self.face_colors = []
+        for element in self.colors:
+            self.face_colors.extend([element] * 4)
+        
 
     def rotate(self, angle_x, angle_y):
         rotation_x = np.array([
@@ -84,15 +85,17 @@ class RubiksCube:
 
         t = self.find_closest_points(rotated_points[8:14], np.array([0,0,-10]))
         closest_centers_indexes = [index + 8 for index in t]
+
+        # to do wywalenia i ustalanie kolejnosci w tym nizej
         sorted_faces = []
         for face in self.faces:
             if (face[0]-1) == closest_centers_indexes[0]:
-                sorted_faces.insert(8, face)   
+                sorted_faces.insert(0, face)   
             elif (face[0]-1) == closest_centers_indexes[1]:
                 sorted_faces.insert(4, face)
             elif (face[0]-1) == closest_centers_indexes[2]:
-                sorted_faces.insert(0, face) 
-
+                sorted_faces.insert(8, face)
+        sorted_faces.reverse()
         for i, face in enumerate(sorted_faces):
             points = [projected_points[j-1] for j in face]
             pygame.draw.polygon(screen, self.face_colors[i], points)
