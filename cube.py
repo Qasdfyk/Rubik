@@ -1,8 +1,8 @@
 import pygame
 import numpy as np
-import math
 import copy
-import random
+from rotation_functions import get_rotation_matrix
+
 
 class RubiksCube:
     def __init__(self):
@@ -52,27 +52,15 @@ class RubiksCube:
             self.face_colors.extend([element] * 4)
         
 
-    def rotate(self, angle_x, angle_y):
-        rotation_x = np.array([
-            [1, 0, 0],
-            [0, math.cos(angle_x), -math.sin(angle_x)],
-            [0, math.sin(angle_x), math.cos(angle_x)]
-        ])
-
-        rotation_y = np.array([
-            [math.cos(angle_y), 0, math.sin(angle_y)],
-            [0, 1, 0],
-            [-math.sin(angle_y), 0, math.cos(angle_y)]
-        ])
-
-        rotation_matrix = np.dot(rotation_y, rotation_x)
-
+    def rotate(self, angle_x, angle_y, orientation):
+        rotation_matrix = get_rotation_matrix(angle_x, angle_y, orientation)
         rotated_points = []
         for vertex in self.vertices:
             rotated_vertex = np.dot(rotation_matrix, vertex)
             rotated_points.append(rotated_vertex)
 
         return rotated_points
+
 
     def project(self, vertices, width, height, scale=300):
         projected_points = []
@@ -83,8 +71,8 @@ class RubiksCube:
 
         return projected_points
 
-    def draw(self, screen, width, height, angle_x, angle_y):
-        rotated_points = self.rotate(angle_x, angle_y)
+    def draw(self, screen, width, height, angle_x, angle_y, orientation):
+        rotated_points = self.rotate(angle_x, angle_y, orientation)
         projected_points = self.project(rotated_points, width, height)
 
         t = self.find_closest_points(rotated_points[8:14], np.array([0,0,-10]))

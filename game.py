@@ -1,7 +1,7 @@
 import pygame
 from cube import RubiksCube
 from pygame.locals import *
-
+from rotation_functions import get_orientation
 
 class Game:
     def __init__(self):
@@ -17,6 +17,7 @@ class Game:
 
     def run(self):
         running = True
+        orientation = 'front'
         while running:
             self.screen.fill((0, 0, 0))
 
@@ -27,6 +28,7 @@ class Game:
                     self.dragging = True
                     pygame.mouse.get_rel()
                 elif event.type == MOUSEBUTTONUP:
+                    orientation = get_orientation(self.angle_y, self.angle_x)
                     self.dragging = False
 
                 elif event.type == pygame.KEYDOWN:
@@ -36,15 +38,13 @@ class Game:
                         self.cube.turn_right_clockwise()
                     elif event.key == pygame.K_f:
                         self.cube.turn_front_clockwise()
-   
-                
 
             if self.dragging:
                 mx, my = pygame.mouse.get_rel()
                 self.angle_x -= my * 0.01
                 self.angle_y -= mx * 0.01
 
-            self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y)
+            self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y, orientation)
             pygame.display.flip()
             self.clock.tick(60)
 
