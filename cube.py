@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 import copy
 from rotation_functions import get_rotation_matrix
+from random import choice
 
 
 class RubiksCube:
@@ -25,7 +26,7 @@ class RubiksCube:
         ]
 
 
-        # Define face indices
+        # Define face indexes
         self.faces = [
             (10, 15, 4, 17), (10, 15, 3, 16), (10, 18, 1, 17), (10, 18, 2, 16),     # Front  1-4
             (9, 19, 8, 21), (9, 19, 7, 20), (9, 22, 5, 21), (9, 22, 6, 20),     # Back       5-8
@@ -74,7 +75,6 @@ class RubiksCube:
     def draw(self, screen, width, height, angle_x, angle_y, orientation):
         rotated_points = self.rotate(angle_x, angle_y, orientation)
         projected_points = self.project(rotated_points, width, height)
-
         t = self.find_closest_points(rotated_points[8:14], np.array([0,0,-10]))
         closest_centers_indexes = [index + 8 for index in t]
 
@@ -87,30 +87,34 @@ class RubiksCube:
             elif (face[0]-1) == closest_centers_indexes[2]:
                 sorted_faces.insert(8, face)
         sorted_faces.reverse()
-
+        
         for face in sorted_faces:
             i = self.faces_dict[face]
             points = [projected_points[j-1] for j in face]
             pygame.draw.polygon(screen, self.face_colors[i], points)
-        
+
 
     def find_closest_points(self, points, reference_point, n=3):
         distances = np.linalg.norm(points - reference_point, axis=1)
         distance_index_pairs = list(enumerate(distances))
         sorted_pairs = sorted(distance_index_pairs, key=lambda x: x[1])
         
-        unique_indices = []
+        unique_indexes = []
         seen_points = set()
 
         for index, dist in sorted_pairs:
             point_tuple = tuple(points[index])
             if point_tuple not in seen_points:
-                unique_indices.append(index)
+                unique_indexes.append(index)
                 seen_points.add(point_tuple)
-            if len(unique_indices) == n:
+            if len(unique_indexes) == n:
                 break
-        return unique_indices
+        return unique_indexes
     
+    def shuffle(self):
+        for i in range(50):
+            choice([self.turn_front_clockwise(), self.turn_top_clockwise(), self.turn_right_clockwise()])
+
     def turn_top_clockwise(self):
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[0] = self.face_colors[20]
