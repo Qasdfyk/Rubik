@@ -1,9 +1,8 @@
 import pygame
 from cube import RubiksCube
-from button import ShuffleButton
+from buttons import ShuffleButton, SolveButton
 from pygame.locals import *
-from rotation_functions import get_orientation
-from random import randint
+from solver import Solver
 import time
 
 class Game:
@@ -22,15 +21,17 @@ class Game:
         self.background = pygame.transform.scale(self.background, (self.width, self.height))
 
         self.shuffle_button = ShuffleButton()
+        self.solve_button = SolveButton()
+        self.solver = Solver(self.cube)
 
     def run(self):
         running = True
-        orientation = 'front'
         shuffle_counter = 0
+
         while running:
             self.screen.fill((0, 0, 0))
-
             for event in pygame.event.get():
+
                 if event.type == QUIT:
                     running = False
                 elif event.type == MOUSEBUTTONDOWN:
@@ -39,8 +40,10 @@ class Game:
                     if self.shuffle_button.is_clicked(event):
                         x = 20                     
                         shuffle_counter = x
+                    if self.solve_button.is_clicked(event):
+                        self.solver.do_bottom_side()
+
                 elif event.type == MOUSEBUTTONUP:
-                    orientation = get_orientation(self.angle_y, self.angle_x)
                     self.dragging = False
 
                 elif event.type == pygame.KEYDOWN:
@@ -59,11 +62,12 @@ class Game:
             if shuffle_counter != 0:
                 self.cube.random_move()
                 shuffle_counter -= 1
-                time.sleep(0.3)   
+                time.sleep(0.2)  
 
             self.screen.blit(self.background, (0, 0))
-            self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y, orientation)
+            self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y)
             self.shuffle_button.draw(self.screen)
+            self.solve_button.draw(self.screen)
             pygame.display.flip()
             self.clock.tick(60)
 

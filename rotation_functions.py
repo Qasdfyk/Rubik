@@ -10,21 +10,7 @@ def normalize(angle):
         angle-=2*pi
     return angle
 
-def get_orientation(angle_x, angle_y):
-    angle_x = normalize(angle_x)
-    angle_y = normalize(angle_y)
-    if -0.25*pi < angle_x <= 0.25*pi:
-        orientation = 'front'
-    elif 0.25*pi < angle_x <= 0.75*pi:
-        orientation = 'right'
-    elif -0.75*pi < angle_x <= -0.25*pi:
-        orientation = 'left'
-    else:
-        orientation = 'back'
-    return orientation
-
-
-def get_rotation_matrix(angle_x, angle_y, orientation):
+def get_rotation_matrix(angle_x, angle_y):
     rotation_x = np.array([
         [1, 0, 0],
         [0, math.cos(angle_x), -math.sin(angle_x)],
@@ -38,6 +24,4 @@ def get_rotation_matrix(angle_x, angle_y, orientation):
     ])
 
     rotation_matrix = np.dot(rotation_y, rotation_x)
-
     return rotation_matrix
-

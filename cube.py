@@ -42,18 +42,18 @@ class RubiksCube:
         # Initialize face colors
         self.colors = [
             [255, 0, 0],    # Red
-            [249, 101, 21],  # Orange            
-            [0, 0, 255],    # Blue
-            [0, 255, 0],    # Green
+            [249, 101, 21],  # Orange       
             [255, 255, 0],  # Yellow
-            [255, 255, 255] # White
+            [255, 255, 255], # White     
+            [0, 255, 0],    # Green
+            [0, 0, 255],    # Blue
         ]
         self.face_colors = []
         for element in self.colors:
             self.face_colors.extend([element] * 4)    
 
-    def rotate(self, angle_x, angle_y, orientation):
-        rotation_matrix = get_rotation_matrix(angle_x, angle_y, orientation)
+    def rotate(self, angle_x, angle_y):
+        rotation_matrix = get_rotation_matrix(angle_x, angle_y)
         rotated_points = []
         for vertex in self.vertices:
             rotated_vertex = np.dot(rotation_matrix, vertex)
@@ -70,8 +70,8 @@ class RubiksCube:
 
         return projected_points
 
-    def draw(self, screen, width, height, angle_x, angle_y, orientation):
-        rotated_points = self.rotate(angle_x, angle_y, orientation)
+    def draw(self, screen, width, height, angle_x, angle_y):
+        rotated_points = self.rotate(angle_x, angle_y)
         projected_points = self.project(rotated_points, width, height)
         t = self.find_closest_points(rotated_points[8:14], np.array([0,0,-10]))
         closest_centers_indexes = [index + 8 for index in t]
@@ -95,10 +95,8 @@ class RubiksCube:
         distances = np.linalg.norm(points - reference_point, axis=1)
         distance_index_pairs = list(enumerate(distances))
         sorted_pairs = sorted(distance_index_pairs, key=lambda x: x[1])
-        
         unique_indexes = []
         seen_points = set()
-
         for index, _ in sorted_pairs:
             point_tuple = tuple(points[index])
             if point_tuple not in seen_points:
@@ -118,7 +116,6 @@ class RubiksCube:
             self.turn_top_clockwise()
 
     def turn_top_clockwise(self):
-        print('top')
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[0] = self.face_colors[20]
         new_colors[1] = self.face_colors[21]
@@ -137,7 +134,6 @@ class RubiksCube:
         self.face_colors = new_colors
     
     def turn_right_clockwise(self):
-        print('right')
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[13] = self.face_colors[3]
         new_colors[15] = self.face_colors[1]
@@ -156,7 +152,6 @@ class RubiksCube:
         self.face_colors = new_colors
 
     def turn_front_clockwise(self):
-        print('front')
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[20] = self.face_colors[12]
         new_colors[22] = self.face_colors[13]
