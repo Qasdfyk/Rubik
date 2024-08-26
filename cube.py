@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 import copy
 from rotation_functions import get_rotation_matrix
-from random import choice
+from random import randint
 
 
 class RubiksCube:
@@ -50,8 +50,7 @@ class RubiksCube:
         ]
         self.face_colors = []
         for element in self.colors:
-            self.face_colors.extend([element] * 4)
-        
+            self.face_colors.extend([element] * 4)    
 
     def rotate(self, angle_x, angle_y, orientation):
         rotation_matrix = get_rotation_matrix(angle_x, angle_y, orientation)
@@ -61,7 +60,6 @@ class RubiksCube:
             rotated_points.append(rotated_vertex)
 
         return rotated_points
-
 
     def project(self, vertices, width, height, scale=300):
         projected_points = []
@@ -93,7 +91,6 @@ class RubiksCube:
             points = [projected_points[j-1] for j in face]
             pygame.draw.polygon(screen, self.face_colors[i], points)
 
-
     def find_closest_points(self, points, reference_point, n=3):
         distances = np.linalg.norm(points - reference_point, axis=1)
         distance_index_pairs = list(enumerate(distances))
@@ -102,7 +99,7 @@ class RubiksCube:
         unique_indexes = []
         seen_points = set()
 
-        for index, dist in sorted_pairs:
+        for index, _ in sorted_pairs:
             point_tuple = tuple(points[index])
             if point_tuple not in seen_points:
                 unique_indexes.append(index)
@@ -111,11 +108,17 @@ class RubiksCube:
                 break
         return unique_indexes
     
-    def shuffle(self):
-        for i in range(50):
-            choice([self.turn_front_clockwise(), self.turn_top_clockwise(), self.turn_right_clockwise()])
+    def random_move(self):
+        i = randint(1, 3)
+        if i == 1:
+            self.turn_front_clockwise()
+        elif i == 2:
+            self.turn_right_clockwise()
+        elif i == 3:
+            self.turn_top_clockwise()
 
     def turn_top_clockwise(self):
+        print('top')
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[0] = self.face_colors[20]
         new_colors[1] = self.face_colors[21]
@@ -134,6 +137,7 @@ class RubiksCube:
         self.face_colors = new_colors
     
     def turn_right_clockwise(self):
+        print('right')
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[13] = self.face_colors[3]
         new_colors[15] = self.face_colors[1]
@@ -152,6 +156,7 @@ class RubiksCube:
         self.face_colors = new_colors
 
     def turn_front_clockwise(self):
+        print('front')
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[20] = self.face_colors[12]
         new_colors[22] = self.face_colors[13]

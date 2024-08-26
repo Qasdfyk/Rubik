@@ -3,13 +3,14 @@ from cube import RubiksCube
 from button import ShuffleButton
 from pygame.locals import *
 from rotation_functions import get_orientation
+from random import randint
+import time
 
 class Game:
     def __init__(self):
         pygame.init()
         self.width, self.height = 800, 600
         self.screen = pygame.display.set_mode((self.width, self.height))
-        bg = pygame.image.load("images/background.jpg")
         pygame.display.set_caption("3D Cube Rotation")
         self.clock = pygame.time.Clock()
         self.cube = RubiksCube()
@@ -25,6 +26,7 @@ class Game:
     def run(self):
         running = True
         orientation = 'front'
+        shuffle_counter = 0
         while running:
             self.screen.fill((0, 0, 0))
 
@@ -35,7 +37,8 @@ class Game:
                     self.dragging = True
                     pygame.mouse.get_rel()
                     if self.shuffle_button.is_clicked(event):
-                        self.cube.shuffle()
+                        x = 20                     
+                        shuffle_counter = x
                 elif event.type == MOUSEBUTTONUP:
                     orientation = get_orientation(self.angle_y, self.angle_x)
                     self.dragging = False
@@ -53,8 +56,12 @@ class Game:
                 self.angle_x -= my * 0.01
                 self.angle_y -= mx * 0.01
 
-            self.screen.blit(self.background, (0, 0))
+            if shuffle_counter != 0:
+                self.cube.random_move()
+                shuffle_counter -= 1
+                time.sleep(0.3)   
 
+            self.screen.blit(self.background, (0, 0))
             self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y, orientation)
             self.shuffle_button.draw(self.screen)
             pygame.display.flip()
