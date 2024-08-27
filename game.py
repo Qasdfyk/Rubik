@@ -27,6 +27,8 @@ class Game:
     def run(self):
         running = True
         shuffle_counter = 0
+        instructions = ''
+        instructions2 = ''
 
         while running:
             self.screen.fill((0, 0, 0))
@@ -41,7 +43,7 @@ class Game:
                         x = 20                     
                         shuffle_counter = x
                     if self.solve_button.is_clicked(event):
-                        self.solver.do_bottom_side()
+                        instructions = self.solver.oll()
 
                 elif event.type == MOUSEBUTTONUP:
                     self.dragging = False
@@ -62,7 +64,19 @@ class Game:
             if shuffle_counter != 0:
                 self.cube.random_move()
                 shuffle_counter -= 1
-                time.sleep(0.2)  
+                time.sleep(0.1)
+            
+            if instructions != '':
+                instruction = instructions[0]
+                instructions = instructions[1:]
+                if instruction == 'R':
+                    self.cube.turn_right_clockwise()
+                elif instruction == 'U':
+                    self.cube.turn_top_clockwise()
+                elif instruction == 'F':
+                    self.cube.turn_front_clockwise()
+                time.sleep(0.1)
+
 
             self.screen.blit(self.background, (0, 0))
             self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y)
