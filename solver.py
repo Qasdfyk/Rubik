@@ -1,4 +1,12 @@
 from cube import *
+from collections import Counter
+
+def most_repeated_count(lst):
+    if not lst:
+        return 0
+    tupled_lst = [tuple(item) if isinstance(item, list) else item for item in lst]
+    count = Counter(tupled_lst)
+    return max(count.values())
 
 class Solver:
     def __init__(self, cube) -> None:
@@ -52,6 +60,52 @@ class Solver:
             instructions = 'RRUURUURR'
         return instructions
 
+    def is_full_side(self):
+        if most_repeated_count(self.front_face) == 4 or most_repeated_count(self.back_face) == 4 or most_repeated_count(self.right_face) == 4 or most_repeated_count(self.left_face) == 4:
+            return True
+        else:
+            return False
+    
+    def load_faces(self):
+        self.front_face = [self.cube.face_colors[0], self.cube.face_colors[1], self.cube.face_colors[2], self.cube.face_colors[3]]
+        self.right_face = [self.cube.face_colors[20], self.cube.face_colors[21], self.cube.face_colors[22], self.cube.face_colors[23]]
+        self.left_face = [self.cube.face_colors[16], self.cube.face_colors[17], self.cube.face_colors[18], self.cube.face_colors[19]]
+        self.back_face = [self.cube.face_colors[5], self.cube.face_colors[4], self.cube.face_colors[6], self.cube.face_colors[7]]
+
+    def recognize_algorithms_pbl(self):
+        self.load_faces()
+        instructions = ""
+        if not self.is_full_side():
+            self.cube.turn_top_clockwise()
+            self.load_faces()
+            if not self.is_full_side():
+                self.cube.turn_top_clockwise()
+                self.load_faces()
+                if not self.is_full_side():
+                    self.cube.turn_top_clockwise()
+                    self.load_faces()
+
+        if self.is_full_side():
+            if most_repeated_count(self.front_face) == 4:
+                instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
+                print('1')
+            if most_repeated_count(self.right_face) == 4:
+                instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
+                print('2')
+            if most_repeated_count(self.back_face) == 4:
+                instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
+                print('3')
+            if most_repeated_count(self.left_face) == 4:
+                if self.cube.face_colors[0] != self.cube.face_colors[1]:
+                    instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
+                else:
+                    instructions = "RRRUUURURFRRURURRRUUURF"
+
+        else:
+            instructions = "RRRUUURURFRRURURRRUUURF"
+            print(':(')
+        return instructions
+
     def pbl(self):
-        pass
+        return self.recognize_algorithms_pbl()
 

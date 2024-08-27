@@ -76,7 +76,9 @@ class Game:
                 elif instruction == 'F':
                     self.cube.turn_front_clockwise()
                 time.sleep(0.1)
-
+                if len(instructions) == 0:
+                    instructions2 = self.solver.pbl()
+                    print(instructions2)
 
             self.screen.blit(self.background, (0, 0))
             self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y)
