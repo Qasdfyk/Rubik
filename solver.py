@@ -98,6 +98,7 @@ class Solver:
                     self.cube.turn_top_clockwise()
                     self.load_faces()
 
+        if self.is_solved(): return ''
         if self.is_full_side():
             #tylko 4,1 dziala
             if most_repeated_count(self.front_face) == 4:
@@ -129,13 +130,10 @@ class Solver:
 
             if most_repeated_count(self.left_face) == 4:
                 if self.cube.face_colors[0] != self.cube.face_colors[1]:
-                    instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
-                    print('4,1')
+                    instructions = "RUrurFRRuruRUrf"
                 else:
-                    instructions = "RURRRUUURRRFFFRRUUURRRUUURURRRF"
-                    print('4,2')
+                    instructions = "RDrdrBRRdrdRDrb"
                 
-
         else:
             instructions = "RRRUUURURFRRURURRRUUURF"
             print(':(')

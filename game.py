@@ -94,6 +94,18 @@ class Game:
                     self.cube.turn_top_counter_clockwise()
                 elif instruction == 'f':
                     self.cube.turn_front_counter_clockwise()
+                elif instruction == 'L':
+                    self.cube.turn_left_clockwise()
+                elif instruction == 'D':
+                    self.cube.turn_bottom_clockwise()
+                elif instruction == 'B':
+                    self.cube.turn_back_clockwise()
+                elif instruction == 'l':
+                    self.cube.turn_left_counter_clockwise()
+                elif instruction == 'd':
+                    self.cube.turn_bottom_counter_clockwise()
+                elif instruction == 'b':
+                    self.cube.turn_back_counter_clockwise()
                 # time.sleep(0.1)
 
             self.screen.blit(self.background, (0, 0))
