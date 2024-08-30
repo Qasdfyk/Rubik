@@ -75,7 +75,6 @@ class Game:
                     self.cube.turn_top_clockwise()
                 elif instruction == 'F':
                     self.cube.turn_front_clockwise()
-                #time.sleep(0.1)
                 if len(instructions) == 0:
                     instructions2 = self.solver.pbl()
             
