@@ -12,6 +12,17 @@ class Solver:
     def __init__(self, cube) -> None:
         self.cube = cube
 
+    def is_solved(self):
+        if (
+                self.cube.face_colors[0] == self.cube.face_colors[1] == self.cube.face_colors[2] == self.cube.face_colors[3] and
+                self.cube.face_colors[16] == self.cube.face_colors[17] == self.cube.face_colors[18] == self.cube.face_colors[19] and
+                self.cube.face_colors[14] == self.cube.face_colors[15] == self.cube.face_colors[12] == self.cube.face_colors[13] and
+                self.cube.face_colors[20] == self.cube.face_colors[21] == self.cube.face_colors[22] == self.cube.face_colors[23] and
+                self.cube.face_colors[5] == self.cube.face_colors[4] == self.cube.face_colors[6] == self.cube.face_colors[7] and
+                self.cube.face_colors[8] == self.cube.face_colors[9] == self.cube.face_colors[10] == self.cube.face_colors[11]
+            ):
+            return True
+
     def check_bottom_side(self):
         if self.cube.face_colors[8] == self.cube.face_colors[9] == self.cube.face_colors[10] == self.cube.face_colors[11] == [255, 255, 0]:
             return True
@@ -35,6 +46,8 @@ class Solver:
             return 'U'
 
     def oll(self):
+        if self.is_solved():
+            return ''
         while not self.check_bottom_side():
             self.cube.random_move()
         instructions = ''
@@ -86,20 +99,42 @@ class Solver:
                     self.load_faces()
 
         if self.is_full_side():
+            #tylko 4,1 dziala
             if most_repeated_count(self.front_face) == 4:
-                instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
-                print('1')
+                if self.cube.face_colors[5] != self.cube.face_colors[4]:
+                    instructions = "FFFUFUUUFRFFUUUFUUUFFFUFRRR"
+                    print('1,1')
+                else:
+                    instructions = 'FFFUUUFUFRRRFFUFUFFFUUUFR'
+                    print('1,2')
+                
+
             if most_repeated_count(self.right_face) == 4:
-                instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
-                print('2')
+                if self.cube.face_colors[0] != self.cube.face_colors[1]:
+                    instructions = "RRRUUURURFFFRRURURRRUUURF"
+                    print('2,1')
+                else:
+                    instructions = 'RRRUUURURFRRURURRRUUURFFF'
+                    print('2,2')
+                
+
             if most_repeated_count(self.back_face) == 4:
-                instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
-                print('3')
+                if self.cube.face_colors[20] != self.cube.face_colors[21]:
+                    instructions = "FUFFFUUUFFFRRRFFUUUFFFUUUFUFFFR"
+                    print('3,1')
+                else:
+                    instructions = 'FUUUFFFUFFFRFFUFUFUUUFRRR'
+                    print('3,2')
+                
+
             if most_repeated_count(self.left_face) == 4:
                 if self.cube.face_colors[0] != self.cube.face_colors[1]:
                     instructions = "RURRRUUURRRFRRUUURRRUUURURRRFFF"
+                    print('4,1')
                 else:
-                    instructions = "RRRUUURURFRRURURRRUUURF"
+                    instructions = "RURRRUUURRRFFFRRUUURRRUUURURRRF"
+                    print('4,2')
+                
 
         else:
             instructions = "RRRUUURURFRRURURRRUUURF"
@@ -107,5 +142,7 @@ class Solver:
         return instructions
 
     def pbl(self):
+        if self.is_solved():
+            return ''
         return self.recognize_algorithms_pbl()
 
