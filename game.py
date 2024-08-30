@@ -64,7 +64,7 @@ class Game:
             if shuffle_counter != 0:
                 self.cube.random_move()
                 shuffle_counter -= 1
-                #time.sleep(0.1)
+                time.sleep(0.1)
             
             if instructions != '':
                 instruction = instructions[0]
@@ -77,6 +77,7 @@ class Game:
                     self.cube.turn_front_clockwise()
                 if len(instructions) == 0:
                     instructions2 = self.solver.pbl()
+                time.sleep(0.1)
             
             if instructions2 != '':
                 instruction = instructions2[0]
@@ -105,7 +106,9 @@ class Game:
                     self.cube.turn_bottom_counter_clockwise()
                 elif instruction == 'b':
                     self.cube.turn_back_counter_clockwise()
-                # time.sleep(0.1)
+                if len(instructions2) == 0:
+                    instructions2 = self.solver.pbl()
+                time.sleep(0.1)
 
             self.screen.blit(self.background, (0, 0))
             self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y)

@@ -103,35 +103,23 @@ class Solver:
         if most_repeated_count(self.front_face) == 4:
             if self.cube.face_colors[5] != self.cube.face_colors[4]:
                 instructions = "BUbubRBBubuBUbr"
-                print('1,1')
             else:
                 instructions = 'BDbdbLBBdbdBDbl'
-                print('1,2')
-
         elif most_repeated_count(self.right_face) == 4:
             if self.cube.face_colors[0] != self.cube.face_colors[1]:
                 instructions = "LUlulBLLuluLUlb"
-                print('2,1')
             else:
-                instructions = 'LDldlFLLdldLUlf'
-                print('2,2')
-            
+                instructions = 'LDldlFLLdldLUlf'           
         elif most_repeated_count(self.back_face) == 4:
             if self.cube.face_colors[20] != self.cube.face_colors[21]:
                 instructions = "FUfufLFFufuFUfl"
-                print('3,1')
             else:
-                instructions = 'FDfdfRFFdfdFDfr'
-                print('3,2')
-            
+                instructions = 'FDfdfRFFdfdFDfr'        
         elif most_repeated_count(self.left_face) == 4:
             if self.cube.face_colors[0] != self.cube.face_colors[1]:
                 instructions = "RUrurFRRuruRUrf"
-                print('4,1')
             else:
-                instructions = "RDrdrBRRdrdRDrb"
-                print('4,2')                
-
+                instructions = "RDrdrBRRdrdRDrb"              
         return instructions
 
     def algorithm_4(self):
@@ -139,26 +127,98 @@ class Solver:
             instructions = ""
             if self.is_solved(): return '' 
             if most_repeated_count(self.front_face) == 4:
-                if self.cube.face_colors[5] != self.cube.face_colors[4]:
-                    instructions = "BUbubRBBubuBUbr"
-                    print('1,1')
+                instructions = "LLuLLUUBBuLL"
 
             elif most_repeated_count(self.right_face) == 4:
-                if self.cube.face_colors[0] != self.cube.face_colors[1]:
-                    instructions = "LUlulBLLuluLUlb"
-                    print('2,1')
-                
+                instructions = "FFuFFUULLuFF"
+            
             elif most_repeated_count(self.back_face) == 4:
-                if self.cube.face_colors[20] != self.cube.face_colors[21]:
-                    instructions = "FUfufLFFufuFUfl"
-                    print('3,1')
+                instructions = "RRuRRUUFFuRR"
                 
             elif most_repeated_count(self.left_face) == 4:
-                if self.cube.face_colors[0] != self.cube.face_colors[1]:
-                    instructions = "RUrurFRRuruRUrf"
-                    print('4,1')                
-
+                instructions = "BBuBBUUBBuBB"             
             return instructions
+    
+    def y_perm(self):
+        instructions = ''
+        if self.cube.face_colors[0] == self.cube.face_colors[1]:
+            if self.cube.face_colors[0] == self.cube.face_colors[2]:
+                instructions = 'BRdrdRDrbRDrdrBRb'
+            else: 
+                instructions = 'RFdfdFDfrFDfdfRFr'
+        else:
+            if self.cube.face_colors[0] == self.cube.face_colors[2]:
+                instructions = 'FRuruRUrfRUrurFRf'
+            else:
+                instructions = 'LFufuFUflFUfufLFl'
+        return instructions
+
+    def algorithm_3(self):
+        return 'RRFFRR'
+    
+    def algorithm_5(self):
+        self.load_faces()
+        instructions = "" 
+        if most_repeated_count(self.front_face) == 3:
+            print('front')
+            if self.cube.face_colors[0] == self.cube.face_colors[1]:
+                print('up')
+                if self.cube.face_colors[3] != self.cube.face_colors[1]:
+                    self.cube.turn_bottom_clockwise()
+                    self.cube.turn_bottom_clockwise()
+                instructions = 'RuRFFrUr'
+            else:
+                print('dwon')
+                if self.cube.face_colors[3] != self.cube.face_colors[1]:
+                    self.cube.turn_bottom_clockwise()
+                    self.cube.turn_bottom_clockwise()
+                instructions = "RdRBBrDr"
+
+        elif most_repeated_count(self.right_face) == 3:
+            print('right')
+            if self.cube.face_colors[20] == self.cube.face_colors[21]:
+                print('up')
+                if self.cube.face_colors[23] != self.cube.face_colors[21]:
+                    self.cube.turn_bottom_clockwise()
+                    self.cube.turn_bottom_clockwise()
+                instructions = 'BuBRRbUb'
+            else:
+                print('down')
+                if self.cube.face_colors[23] != self.cube.face_colors[21]:
+                    self.cube.turn_bottom_clockwise()
+                    self.cube.turn_bottom_clockwise()
+                instructions = 'BdBLLbDb'
+        
+        elif most_repeated_count(self.back_face) == 3:
+            print('back')
+            if self.cube.face_colors[5] == self.cube.face_colors[4]:
+                print('up')
+                if self.cube.face_colors[4] != self.cube.face_colors[6]:
+                    self.cube.turn_bottom_clockwise()
+                    self.cube.turn_bottom_clockwise()
+                instructions = 'LuLBBlUl'
+            else:
+                print('down')
+                if self.cube.face_colors[4] != self.cube.face_colors[6]:
+                    self.cube.turn_bottom_clockwise()
+                    self.cube.turn_bottom_clockwise()
+                instructions = 'LdLFFlDl'
+            
+        elif most_repeated_count(self.left_face) == 3:
+            print('left')
+            if self.cube.face_colors[16] == self.cube.face_colors[17]:
+                print('up')
+                if self.cube.face_colors[17] != self.cube.face_colors[19]:
+                    self.cube.turn_bottom_clockwise()
+                    self.cube.turn_bottom_clockwise()
+                instructions = 'FuFLLfUf'
+            else:
+                print('down')
+                if self.cube.face_colors[17] != self.cube.face_colors[19]:
+                    self.cube.turn_bottom_clockwise()
+                    self.cube.turn_bottom_clockwise()
+                instructions = 'FdFRRfDf'        
+        return instructions
 
     def pbl(self):
         if self.is_solved(): return ''
@@ -169,28 +229,25 @@ class Solver:
             self.cube.turn_top_clockwise()
             if self.is_solved(): return ''
         x = find_first_occurrence(counts, 4)
+        y = find_first_occurrence(counts, 3)
         if x != -1:
             for _ in range(x):
                 self.cube.turn_top_clockwise()
             y = counts[x]
             y.remove(4)
-            print(y)
             if y == [2,2,2]:
-                print('option 4')
                 return self.algorithm_4()
             else:
-                print('option 1 ')
-                return self.t_perm()
-        x = find_first_occurrence(counts, 3)
-        if x != -1: 
-            for _ in range(x):
+                return self.t_perm()        
+        elif y != -1: 
+            for _ in range(y):
                 self.cube.turn_top_clockwise()       
-            if counts[x] == [3,3,3,3]:
+            if counts[y] == [3,3,3,3]:
                 print('y-perm')
+                return self.y_perm()
             else:
-                print('option 5')
-        else: print('option 3')
-        return ''
-        
-        #return self.recognize_algorithms_pbl()
+                return self.algorithm_5()               
+        else: 
+            print('option 3')
+            return self.algorithm_3()
 
