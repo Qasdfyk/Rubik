@@ -160,60 +160,48 @@ class Solver:
         self.load_faces()
         instructions = "" 
         if most_repeated_count(self.front_face) == 3:
-            print('front')
             if self.cube.face_colors[0] == self.cube.face_colors[1]:
-                print('up')
                 if self.cube.face_colors[3] != self.cube.face_colors[1]:
                     self.cube.turn_bottom_clockwise()
                     self.cube.turn_bottom_clockwise()
                 instructions = 'RuRFFrUr'
             else:
-                print('dwon')
                 if self.cube.face_colors[3] != self.cube.face_colors[1]:
                     self.cube.turn_bottom_clockwise()
                     self.cube.turn_bottom_clockwise()
                 instructions = "RdRBBrDr"
 
         elif most_repeated_count(self.right_face) == 3:
-            print('right')
             if self.cube.face_colors[20] == self.cube.face_colors[21]:
-                print('up')
                 if self.cube.face_colors[23] != self.cube.face_colors[21]:
                     self.cube.turn_bottom_clockwise()
                     self.cube.turn_bottom_clockwise()
                 instructions = 'BuBRRbUb'
             else:
-                print('down')
                 if self.cube.face_colors[23] != self.cube.face_colors[21]:
                     self.cube.turn_bottom_clockwise()
                     self.cube.turn_bottom_clockwise()
                 instructions = 'BdBLLbDb'
         
         elif most_repeated_count(self.back_face) == 3:
-            print('back')
             if self.cube.face_colors[5] == self.cube.face_colors[4]:
-                print('up')
                 if self.cube.face_colors[4] != self.cube.face_colors[6]:
                     self.cube.turn_bottom_clockwise()
                     self.cube.turn_bottom_clockwise()
                 instructions = 'LuLBBlUl'
             else:
-                print('down')
                 if self.cube.face_colors[4] != self.cube.face_colors[6]:
                     self.cube.turn_bottom_clockwise()
                     self.cube.turn_bottom_clockwise()
                 instructions = 'LdLFFlDl'
             
         elif most_repeated_count(self.left_face) == 3:
-            print('left')
             if self.cube.face_colors[16] == self.cube.face_colors[17]:
-                print('up')
                 if self.cube.face_colors[17] != self.cube.face_colors[19]:
                     self.cube.turn_bottom_clockwise()
                     self.cube.turn_bottom_clockwise()
                 instructions = 'FuFLLfUf'
             else:
-                print('down')
                 if self.cube.face_colors[17] != self.cube.face_colors[19]:
                     self.cube.turn_bottom_clockwise()
                     self.cube.turn_bottom_clockwise()
@@ -238,16 +226,14 @@ class Solver:
             if y == [2,2,2]:
                 return self.algorithm_4()
             else:
-                return self.t_perm()        
+                return self.t_perm() 
         elif y != -1: 
             for _ in range(y):
                 self.cube.turn_top_clockwise()       
             if counts[y] == [3,3,3,3]:
-                print('y-perm')
                 return self.y_perm()
             else:
                 return self.algorithm_5()               
         else: 
-            print('option 3')
             return self.algorithm_3()
 
