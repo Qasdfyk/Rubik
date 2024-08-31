@@ -1,7 +1,9 @@
 import pygame
 from cube import RubiksCube
+from buttons import ShuffleButton, SolveButton
 from pygame.locals import *
-from rotation_functions import get_orientation
+from solver import Solver
+import time
 
 class Game:
     def __init__(self):
@@ -15,20 +17,35 @@ class Game:
         self.angle_y = 0
         self.dragging = False
 
+        self.background = pygame.image.load("images/background.jpg").convert()
+        self.background = pygame.transform.scale(self.background, (self.width, self.height))
+
+        self.shuffle_button = ShuffleButton()
+        self.solve_button = SolveButton()
+        self.solver = Solver(self.cube)
+
     def run(self):
         running = True
-        orientation = 'front'
+        shuffle_counter = 0
+        instructions = ''
+        instructions2 = ''
+
         while running:
             self.screen.fill((0, 0, 0))
-
             for event in pygame.event.get():
+
                 if event.type == QUIT:
                     running = False
                 elif event.type == MOUSEBUTTONDOWN:
                     self.dragging = True
                     pygame.mouse.get_rel()
+                    if self.shuffle_button.is_clicked(event):
+                        x = 20                     
+                        shuffle_counter = x
+                    if self.solve_button.is_clicked(event):
+                        instructions = self.solver.oll()
+
                 elif event.type == MOUSEBUTTONUP:
-                    orientation = get_orientation(self.angle_y, self.angle_x)
                     self.dragging = False
 
                 elif event.type == pygame.KEYDOWN:
@@ -44,7 +61,59 @@ class Game:
                 self.angle_x -= my * 0.01
                 self.angle_y -= mx * 0.01
 
-            self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y, orientation)
+            if shuffle_counter != 0:
+                self.cube.random_move()
+                shuffle_counter -= 1
+                time.sleep(0.2)
+            
+            if instructions != '':
+                instruction = instructions[0]
+                instructions = instructions[1:]
+                if instruction == 'R':
+                    self.cube.turn_right_clockwise()
+                elif instruction == 'U':
+                    self.cube.turn_top_clockwise()
+                elif instruction == 'F':
+                    self.cube.turn_front_clockwise()
+                if len(instructions) == 0:
+                    instructions2 = self.solver.pbl()
+                time.sleep(0.2)
+            
+            if instructions2 != '':
+                instruction = instructions2[0]
+                instructions2 = instructions2[1:]                
+                if instruction == 'R':
+                    self.cube.turn_right_clockwise()
+                elif instruction == 'U':
+                    self.cube.turn_top_clockwise()
+                elif instruction == 'F':
+                    self.cube.turn_front_clockwise()
+                elif instruction == 'r':
+                    self.cube.turn_right_counter_clockwise()
+                elif instruction == 'u':
+                    self.cube.turn_top_counter_clockwise()
+                elif instruction == 'f':
+                    self.cube.turn_front_counter_clockwise()
+                elif instruction == 'L':
+                    self.cube.turn_left_clockwise()
+                elif instruction == 'D':
+                    self.cube.turn_bottom_clockwise()
+                elif instruction == 'B':
+                    self.cube.turn_back_clockwise()
+                elif instruction == 'l':
+                    self.cube.turn_left_counter_clockwise()
+                elif instruction == 'd':
+                    self.cube.turn_bottom_counter_clockwise()
+                elif instruction == 'b':
+                    self.cube.turn_back_counter_clockwise()
+                if len(instructions2) == 0:
+                    instructions2 = self.solver.pbl()
+                time.sleep(0.2)
+
+            self.screen.blit(self.background, (0, 0))
+            self.cube.draw(self.screen, self.width, self.height, self.angle_x, self.angle_y)
+            self.shuffle_button.draw(self.screen)
+            self.solve_button.draw(self.screen)
             pygame.display.flip()
             self.clock.tick(60)
 

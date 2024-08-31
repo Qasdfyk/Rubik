@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 import copy
 from rotation_functions import get_rotation_matrix
+from random import randint
 
 
 class RubiksCube:
@@ -25,7 +26,7 @@ class RubiksCube:
         ]
 
 
-        # Define face indices
+        # Define face indexes
         self.faces = [
             (10, 15, 4, 17), (10, 15, 3, 16), (10, 18, 1, 17), (10, 18, 2, 16),     # Front  1-4
             (9, 19, 8, 21), (9, 19, 7, 20), (9, 22, 5, 21), (9, 22, 6, 20),     # Back       5-8
@@ -41,26 +42,24 @@ class RubiksCube:
         # Initialize face colors
         self.colors = [
             [255, 0, 0],    # Red
-            [249, 101, 21],  # Orange            
-            [0, 0, 255],    # Blue
-            [0, 255, 0],    # Green
+            [249, 101, 21],  # Orange       
             [255, 255, 0],  # Yellow
-            [255, 255, 255] # White
+            [255, 255, 255], # White     
+            [0, 255, 0],    # Green
+            [0, 0, 255],    # Blue
         ]
         self.face_colors = []
         for element in self.colors:
-            self.face_colors.extend([element] * 4)
-        
+            self.face_colors.extend([element] * 4)    
 
-    def rotate(self, angle_x, angle_y, orientation):
-        rotation_matrix = get_rotation_matrix(angle_x, angle_y, orientation)
+    def rotate(self, angle_x, angle_y):
+        rotation_matrix = get_rotation_matrix(angle_x, angle_y)
         rotated_points = []
         for vertex in self.vertices:
             rotated_vertex = np.dot(rotation_matrix, vertex)
             rotated_points.append(rotated_vertex)
 
         return rotated_points
-
 
     def project(self, vertices, width, height, scale=300):
         projected_points = []
@@ -71,10 +70,9 @@ class RubiksCube:
 
         return projected_points
 
-    def draw(self, screen, width, height, angle_x, angle_y, orientation):
-        rotated_points = self.rotate(angle_x, angle_y, orientation)
+    def draw(self, screen, width, height, angle_x, angle_y):
+        rotated_points = self.rotate(angle_x, angle_y)
         projected_points = self.project(rotated_points, width, height)
-
         t = self.find_closest_points(rotated_points[8:14], np.array([0,0,-10]))
         closest_centers_indexes = [index + 8 for index in t]
 
@@ -87,30 +85,36 @@ class RubiksCube:
             elif (face[0]-1) == closest_centers_indexes[2]:
                 sorted_faces.insert(8, face)
         sorted_faces.reverse()
-
+        
         for face in sorted_faces:
             i = self.faces_dict[face]
             points = [projected_points[j-1] for j in face]
             pygame.draw.polygon(screen, self.face_colors[i], points)
-        
 
     def find_closest_points(self, points, reference_point, n=3):
         distances = np.linalg.norm(points - reference_point, axis=1)
         distance_index_pairs = list(enumerate(distances))
         sorted_pairs = sorted(distance_index_pairs, key=lambda x: x[1])
-        
-        unique_indices = []
+        unique_indexes = []
         seen_points = set()
-
-        for index, dist in sorted_pairs:
+        for index, _ in sorted_pairs:
             point_tuple = tuple(points[index])
             if point_tuple not in seen_points:
-                unique_indices.append(index)
+                unique_indexes.append(index)
                 seen_points.add(point_tuple)
-            if len(unique_indices) == n:
+            if len(unique_indexes) == n:
                 break
-        return unique_indices
+        return unique_indexes
     
+    def random_move(self):
+        i = randint(1, 3)
+        if i == 1:
+            self.turn_front_clockwise()
+        elif i == 2:
+            self.turn_right_clockwise()
+        elif i == 3:
+            self.turn_top_clockwise()
+
     def turn_top_clockwise(self):
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[0] = self.face_colors[20]
@@ -129,6 +133,24 @@ class RubiksCube:
 
         self.face_colors = new_colors
     
+    def turn_top_counter_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[20] = self.face_colors[0]
+        new_colors[21] = self.face_colors[1]
+        new_colors[0] = self.face_colors[16]
+        new_colors[1] = self.face_colors[17]
+        new_colors[16] = self.face_colors[5]
+        new_colors[17] = self.face_colors[4]
+        new_colors[5] = self.face_colors[20]
+        new_colors[4] = self.face_colors[21]
+
+        new_colors[13] = self.face_colors[12]
+        new_colors[12] = self.face_colors[14]
+        new_colors[14] = self.face_colors[15]
+        new_colors[15] = self.face_colors[13]
+
+        self.face_colors = new_colors
+
     def turn_right_clockwise(self):
         new_colors = copy.deepcopy(self.face_colors)
         new_colors[13] = self.face_colors[3]
@@ -144,6 +166,24 @@ class RubiksCube:
         new_colors[23] = self.face_colors[21]
         new_colors[22] = self.face_colors[23]
         new_colors[20] = self.face_colors[22]        
+
+        self.face_colors = new_colors
+
+    def turn_right_counter_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[3] = self.face_colors[13]
+        new_colors[1] = self.face_colors[15]
+        new_colors[13] = self.face_colors[5]
+        new_colors[15] = self.face_colors[7]
+        new_colors[7] = self.face_colors[9]
+        new_colors[5] = self.face_colors[11]
+        new_colors[9] = self.face_colors[1]
+        new_colors[11] = self.face_colors[3]
+
+        new_colors[20] = self.face_colors[21]
+        new_colors[21] = self.face_colors[23]
+        new_colors[23] = self.face_colors[22]
+        new_colors[22] = self.face_colors[20]
 
         self.face_colors = new_colors
 
@@ -164,3 +204,129 @@ class RubiksCube:
         new_colors[2] = self.face_colors[3] 
 
         self.face_colors = new_colors
+    
+    def turn_front_counter_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[12] = self.face_colors[20]
+        new_colors[13] = self.face_colors[22]
+        new_colors[22] = self.face_colors[8]
+        new_colors[20] = self.face_colors[9]
+        new_colors[8] = self.face_colors[17]
+        new_colors[9] = self.face_colors[19]
+        new_colors[19] = self.face_colors[12]
+        new_colors[17] = self.face_colors[13]
+
+        new_colors[2] = self.face_colors[0]
+        new_colors[0] = self.face_colors[1]
+        new_colors[1] = self.face_colors[3]
+        new_colors[3] = self.face_colors[2]
+
+        self.face_colors = new_colors
+
+    def turn_back_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[14] = self.face_colors[21]
+        new_colors[15] = self.face_colors[23]
+        new_colors[21] = self.face_colors[11]
+        new_colors[23] = self.face_colors[10]
+        new_colors[16] = self.face_colors[15]
+        new_colors[18] = self.face_colors[14]
+        new_colors[10] = self.face_colors[16]
+        new_colors[11] = self.face_colors[18]
+
+        new_colors[4] = self.face_colors[5]
+        new_colors[5] = self.face_colors[7]
+        new_colors[7] = self.face_colors[6]
+        new_colors[6] = self.face_colors[4]        
+        
+        self.face_colors = new_colors
+    
+    def turn_back_counter_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[21] = self.face_colors[14]
+        new_colors[23] = self.face_colors[15]
+        new_colors[11] = self.face_colors[21]
+        new_colors[10] = self.face_colors[23]
+        new_colors[15] = self.face_colors[16]
+        new_colors[14] = self.face_colors[18]
+        new_colors[16] = self.face_colors[10]
+        new_colors[18] = self.face_colors[11]
+
+        new_colors[5] = self.face_colors[4]
+        new_colors[7] = self.face_colors[5]
+        new_colors[6] = self.face_colors[7]
+        new_colors[4] = self.face_colors[6]
+
+        self.face_colors = new_colors
+    
+    def turn_left_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[14] = self.face_colors[6]
+        new_colors[12] = self.face_colors[4]
+        new_colors[0] = self.face_colors[14]
+        new_colors[2] = self.face_colors[12]
+        new_colors[8] = self.face_colors[0]
+        new_colors[10] = self.face_colors[2]
+        new_colors[4] = self.face_colors[10]
+        new_colors[6] = self.face_colors[8]
+
+        new_colors[16] = self.face_colors[18]
+        new_colors[17] = self.face_colors[16]
+        new_colors[18] = self.face_colors[19]
+        new_colors[19] = self.face_colors[17]
+        self.face_colors = new_colors
+    
+    def turn_left_counter_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[6] = self.face_colors[14]
+        new_colors[4] = self.face_colors[12]
+        new_colors[14] = self.face_colors[0]
+        new_colors[12] = self.face_colors[2]
+        new_colors[0] = self.face_colors[8]
+        new_colors[2] = self.face_colors[10]
+        new_colors[10] = self.face_colors[4]
+        new_colors[8] = self.face_colors[6]
+
+        new_colors[18] = self.face_colors[16]
+        new_colors[16] = self.face_colors[17]
+        new_colors[19] = self.face_colors[18]
+        new_colors[17] = self.face_colors[19]
+
+        self.face_colors = new_colors
+    
+    def turn_bottom_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[2] = self.face_colors[18]
+        new_colors[3] = self.face_colors[19]
+        new_colors[18] = self.face_colors[7]
+        new_colors[19] = self.face_colors[6]
+        new_colors[22] = self.face_colors[2]
+        new_colors[23] = self.face_colors[3]
+        new_colors[7] = self.face_colors[22]
+        new_colors[6] = self.face_colors[23]
+
+        new_colors[8] = self.face_colors[10]
+        new_colors[9] = self.face_colors[8]
+        new_colors[10] = self.face_colors[11]
+        new_colors[11] = self.face_colors[9]
+
+        self.face_colors = new_colors           
+    
+    def turn_bottom_counter_clockwise(self):
+        new_colors = copy.deepcopy(self.face_colors)
+        new_colors[18] = self.face_colors[2]
+        new_colors[19] = self.face_colors[3]
+        new_colors[7] = self.face_colors[18]
+        new_colors[6] = self.face_colors[19]
+        new_colors[2] = self.face_colors[22]
+        new_colors[3] = self.face_colors[23]
+        new_colors[22] = self.face_colors[7]
+        new_colors[23] = self.face_colors[6]
+
+        new_colors[10] = self.face_colors[8]
+        new_colors[8] = self.face_colors[9]
+        new_colors[11] = self.face_colors[10]
+        new_colors[9] = self.face_colors[11]
+
+
+        self.face_colors = new_colors         
